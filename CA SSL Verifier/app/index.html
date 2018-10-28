@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Monomer - Decentralized Certificate Authority</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/messenger/1.5.0/css/messenger.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/messenger/1.5.0/css/messenger-theme-air.min.css" />
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/messenger/1.5.0/js/messenger.min.js"></script>
+  <script type="text/javascript">
+    function notify(struct) {
+      console.log(struct);
+      $.post('http://localhost:7000/foo', struct).then(function (data) {
+        console.log(data);
+      })
+    }
+
+  </script>
+  <script src="./app.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+</head>
+
+<body>
+  <!-- <input type="text" id="hostname"> -->
+  <h3 class="header col-lg-12 col-md-12 text-info text-center">Monomer - Decentralized Certificate Authority</h3>
+  <div id="dropZone" class="dropzone">
+  </div>
+  <div class="col-lg-4 col-md-4 offset-md-3">
+    <form>
+      <div class="form-group row">
+        <label for="staticEmail" class="col-sm-2 col-form-label">HostName</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="hostname" value="example.com">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="inputPassword" class="col-sm-2 col-form-label">Country</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="country" placeholder="">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="inputPassword" class="col-sm-2 col-form-label">Email</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="email" placeholder="">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="inputPassword" class="col-sm-2 col-form-label">Location</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="location" placeholder="">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="inputPassword" class="col-sm-2 col-form-label">Key</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="publickey" placeholder="">
+        </div>
+      </div>
+    </form>
+    <div class="row buttons">
+
+      <button type="button" class="btn btn-primary" onclick="controller.callVerify()">Verify</button>
+      <!-- <button onclick="controller.isVerified()">isVerified</button> -->
+      <button type="button" class="btn btn-warning" onclick="controller.revoke()">Revoke</button>
+    </div>
+  </div>
+</body>
+<script>
+  var myDropzone = new Dropzone("div#dropZone", { url: "http://localhost:7000/certs", acceptedFiles: '.crt' });
+  myDropzone.on('complete', function (data) {
+    var resp = JSON.parse(data.xhr.response);
+    $('#hostname').val(resp["CN"]);
+    $('#country').val(resp["O"]);
+    $('#email').val(resp["emailAddress"]);
+    $('#location').val(resp["L"]);
+    $('#publickey').val(resp["hash"]);
+  })
+</script>
+
+</html>
